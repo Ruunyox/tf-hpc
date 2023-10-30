@@ -2,7 +2,7 @@ import argparse
 import tensorflow as tf
 import tensorflow_datasets as tfds
 from jsonargparse import CLI, ArgumentParser, ActionConfigFile
-from tf_hpc.nn.models import *
+from ..nn.models import *
 
 
 def main():

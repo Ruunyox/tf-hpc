@@ -116,14 +116,16 @@ class FullyConnectedClassifier(tf.keras.Model):
         # Unpack the data. Its structure depends on your model and
         # on what you pass to `fit()`.
         if len(data) == 3:
-            x, y, sample_weight = data['image'], data['label'], data['sample_weight']
+            x, y, sample_weight = data["image"], data["label"], data["sample_weight"]
         else:
-            x, y, sample_weight = data['image'], data['label'], None
+            x, y, sample_weight = data["image"], data["label"], None
 
         with tf.GradientTape() as tape:
             y_pred = self(x, training=True)  # Forward pass
             # (the loss function is configured in `compile()`)
-            loss = self.compute_loss(x=x, y=y, y_pred=y_pred, sample_weight=sample_weight)
+            loss = self.compute_loss(
+                x=x, y=y, y_pred=y_pred, sample_weight=sample_weight
+            )
 
         # Compute gradients
         trainable_vars = self.trainable_variables
@@ -136,9 +138,9 @@ class FullyConnectedClassifier(tf.keras.Model):
         # Unpack the data. Its structure depends on your model and
         # on what you pass to `fit()`.
         if len(data) == 3:
-            x, y, sample_weight = data['image'], data['label'], data['sample_weight']
+            x, y, sample_weight = data["image"], data["label"], data["sample_weight"]
         else:
-            x, y, sample_weight = data['image'], data['label'], None
+            x, y, sample_weight = data["image"], data["label"], None
 
         y_pred = self(x, training=True)  # Forward pass
         # (the loss function is configured in `compile()`)
