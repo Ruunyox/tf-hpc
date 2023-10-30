@@ -15,6 +15,9 @@ def CompileBuilder(
     steps_per_execution: Optional[Union[int, str]] = None,
     **kwargs,
 ) -> Dict:
+    """Option wrapper for `tf.keras.Model.compile()`. See help(tf.keras.Model.compile)
+    for more details.
+    """
     out_dict = {
         "optimizer": optimizer,
         "loss": loss,
@@ -40,7 +43,9 @@ def FitBuilder(
     workers: int = 1,
     **kwargs,
 ) -> Dict:
-    """Wrapper for YAML configs. Only supports tf.Dataset input-compatible options"""
+    """Wrapper for `tf.keras.Model.fit()`. See `help(tf.keras.Model.fit)` for more details.
+    Only supports tf.Dataset input-compatible options
+    """
     out_dict = {
         "epochs": epochs,
         "verbose": verbose,
@@ -58,7 +63,7 @@ def FitBuilder(
 
 
 class ModelWrapper(object):
-    """Wrapper for YAML configs"""
+    """Wrapper for `tf.keras.Model`"""
 
     def __init__(self, model: tf.keras.Model):
         self.model = model
@@ -68,6 +73,26 @@ class ModelWrapper(object):
 
 
 class FullyConnectedClassifier(tf.keras.Model):
+    """Fully connected, feed-forward image classifier
+
+    Parameters
+    ----------
+    tag:
+        `str` specifying model name
+    in_dim:
+        `int` specifying the flattened number of input pixels
+    out_dim:
+        `int` specifying the number of classes
+    activation:
+        Valid tf.keras.activations `str` or `Callable`
+        instance for the hidden layer activations
+    class_activation
+        Valid tf.keras.activations `str` or `Callable`
+        instance for the class prediction activation.
+    hidden_layers:
+        `List[int]` of hidden layer dimensions for linear transforms
+    """
+
     def __init__(
         self,
         tag: str,
@@ -112,9 +137,8 @@ class FullyConnectedClassifier(tf.keras.Model):
 
         self.net = layers
 
-    def train_step(self, data):
-        # Unpack the data. Its structure depends on your model and
-        # on what you pass to `fit()`.
+    def train_step(self, data: Dict) -> Dict:
+        """Model training step"""
         if len(data) == 3:
             x, y, sample_weight = data["image"], data["label"], data["sample_weight"]
         else:
@@ -122,32 +146,27 @@ class FullyConnectedClassifier(tf.keras.Model):
 
         with tf.GradientTape() as tape:
             y_pred = self(x, training=True)  # Forward pass
-            # (the loss function is configured in `compile()`)
             loss = self.compute_loss(
                 x=x, y=y, y_pred=y_pred, sample_weight=sample_weight
             )
 
-        # Compute gradients
         trainable_vars = self.trainable_variables
         gradients = tape.gradient(loss, trainable_vars)
-        # Update weights
         self.optimizer.apply_gradients(zip(gradients, trainable_vars))
         return self.compute_metrics(x, y, y_pred, sample_weight)
 
-    def test_step(self, data):
-        # Unpack the data. Its structure depends on your model and
-        # on what you pass to `fit()`.
+    def test_step(self, data: Dict) -> Dict:
+        """Model test/validation step"""
         if len(data) == 3:
             x, y, sample_weight = data["image"], data["label"], data["sample_weight"]
         else:
             x, y, sample_weight = data["image"], data["label"], None
 
         y_pred = self(x, training=True)  # Forward pass
-        # (the loss function is configured in `compile()`)
         loss = self.compute_loss(x=x, y=y, y_pred=y_pred, sample_weight=sample_weight)
         return self.compute_metrics(x, y, y_pred, sample_weight)
 
-    def call(self, x, training=False):
+    def call(self, x: tf.Tensor, training: bool = False) -> tf.Tensor:
         """Forward pass through the model"""
         _, out_channels, pixel_x, pixel_y = x.shape
         x = tf.reshape(x, (-1, pixel_x * pixel_y * out_channels))

@@ -6,4 +6,4 @@
 #SBATCH --mem-per-cpu=1G
 #SBATCH --cpus-per-task=4
 
-python train.py --config config.yaml
+tfhpc --config config.yaml

@@ -22,7 +22,7 @@ setup(
     author="Nick Charron",
     license="MIT",
     author_email="charron.nicholas.e@gmail.com",
-    url="https://github.com/ruunyox/slurmvision", 
+    url="https://github.com/ruunyox/tf-hpc",
     packages=find_packages(),
     install_requires=install_requires,
     zip_safe=True,
