@@ -62,6 +62,19 @@ def FitBuilder(
     return out_dict
 
 
+class MirroredStrategyWrapper(tf.distribute.MirroredStrategy):
+    """Wrapper for `tf.distribute.MirroredStrategy`"""
+
+    def __init__(
+        self,
+        devices: Optional[List[str]] = None,
+        cross_device_ops: Optional[tf.distribute.CrossDeviceOps] = None,
+    ):
+        super(MirroredStrategyWrapper, self).__init__(
+            devices=devices, cross_device_ops=cross_device_ops
+        )
+
+
 class ModelWrapper(object):
     """Wrapper for `tf.keras.Model`"""
 
