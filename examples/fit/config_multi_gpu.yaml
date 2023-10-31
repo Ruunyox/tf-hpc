@@ -11,7 +11,7 @@ compile: # see help(tensorflow.keras.Model.compile) for options
         - class_path: tensorflow.keras.metrics.SparseCategoricalAccuracy
     run_eagerly: false
 fit: # See help(tensorflow.keras.Model.fit) for options. Only supports tf.Dataset inputs
-    verbose: 1
+    verbose: 0
     epochs: 500
     callbacks:
         - class_path: tensorflow.keras.callbacks.TensorBoard
@@ -37,4 +37,8 @@ model_wrapper:
             activation: relu
             class_activation: softmax
             hidden_layers: [4096,2048,1024,512]
-strategy: null
+strategy:
+    name: mirrored_strategy
+    opts:
+        devices: ["/gpu:0", "/gpu:1", "/gpu:2", "/gpu:3"]
+        cross_device_ops: null 
