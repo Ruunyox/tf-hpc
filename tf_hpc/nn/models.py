@@ -291,7 +291,7 @@ class ConvolutionClassifier(BasicImageModel):
 
     def call(self, x: tf.Tensor, training: bool = False) -> tf.Tensor:
         """Forward pass through the model"""
-
+        x = tf.cast(x, tf.float32)
         for layer in self.convolutions:
             x = layer(x)
 

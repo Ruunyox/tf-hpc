@@ -6,12 +6,15 @@ from ..nn.models import *
 from typing import List, Optional
 
 strategies = {"mirrored_strategy": tf.distribute.MirroredStrategy}
+cast_types = {"float32": tf.float32}
 
 
 def main():
     parser = ArgumentParser()
     parser.add_class_arguments(ModelWrapper, "model_wrapper")
     parser.add_argument("--strategy.name", type=Optional[str])
+    parser.add_argument("--x_cast", type=Optional[str])
+    parser.add_argument("--y_cast", type=Optional[str])
     parser.add_argument("--strategy.opts.devices", type=Optional[List[str]])
     parser.add_argument(
         "--strategy.opts.cross_device_ops", type=Optional[tf.distribute.CrossDeviceOps]
