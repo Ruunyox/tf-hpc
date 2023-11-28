@@ -13,6 +13,7 @@ def CompileBuilder(
     loss_weights: Optional[Union[List[float], Dict[str, float]]] = None,
     run_eagerly: Optional[bool] = None,
     steps_per_execution: Optional[Union[int, str]] = None,
+    jit_compile: bool = False,
     **kwargs,
 ) -> Dict:
     """Option wrapper for `tf.keras.Model.compile()`. See help(tf.keras.Model.compile)
@@ -25,6 +26,7 @@ def CompileBuilder(
         "loss_weights": loss_weights,
         "run_eagerly": run_eagerly,
         "steps_per_execution": steps_per_execution,
+        "jit_compile": jit_compile,
     }
     out_dict.update(kwargs)
     return out_dict
@@ -41,6 +43,7 @@ def FitBuilder(
     validation_freq: Union[int, List[int]] = 1,
     max_queue_size: int = 10,
     workers: int = 1,
+    shuffle: Union[bool, int] = True,
     **kwargs,
 ) -> Dict:
     """Wrapper for `tf.keras.Model.fit()`. See `help(tf.keras.Model.fit)` for more details.
@@ -57,6 +60,7 @@ def FitBuilder(
         "validation_freq": validation_freq,
         "max_queue_size": max_queue_size,
         "workers": workers,
+        "shuffle": shuffle,
     }
     out_dict.update(kwargs)
     return out_dict
@@ -123,9 +127,6 @@ class FullyConnectedClassifier(BasicImageModel):
     activation:
         Valid tf.keras.activations `str` or `Callable`
         instance for the hidden layer activations
-    class_activation
-        Valid tf.keras.activations `str` or `Callable`
-        instance for the class prediction activation.
     hidden_layers:
         `List[int]` of hidden layer dimensions for linear transforms
     """
@@ -135,7 +136,6 @@ class FullyConnectedClassifier(BasicImageModel):
         tag: str,
         out_dim: int,
         activation: Union[str, Callable],
-        class_activation: Union[str, Callable],
         hidden_layers: Optional[List[int]] = None,
     ):
         super(FullyConnectedClassifier, self).__init__()
@@ -167,9 +167,6 @@ class FullyConnectedClassifier(BasicImageModel):
         layers.append(
             tf.keras.layers.Dense(out_dim, activation=None, name="class_dense")
         )
-        layers.append(
-            tf.keras.layers.Activation(class_activation, name="class_activation")
-        )
 
         self.net = layers
 
@@ -194,9 +191,6 @@ class ConvolutionClassifier(BasicImageModel):
     activation:
         Valid tf.keras.activations `str` or `Callable` instance for the hidden layer
         activations
-    class_activation
-        Valid tf.keras.activations `str` or `Callable` instance for the class
-        prediction activation.
     hidden_layers:
         `List[int]` of hidden linear transform widths in the fully connected network
     conv_channels:
@@ -214,7 +208,6 @@ class ConvolutionClassifier(BasicImageModel):
         tag: str,
         out_dim: int,
         activation: Union[str, Callable],
-        class_activation: Union[str, Callable],
         hidden_layers: Optional[List[int]] = None,
         conv_channels: Optional[List[int]] = None,
         conv_kernels: Optional[Union[List[int], List[Tuple[int]]]] = None,
@@ -282,9 +275,6 @@ class ConvolutionClassifier(BasicImageModel):
                 )
         layers.append(
             tf.keras.layers.Dense(out_dim, activation=None, name="class_dense")
-        )
-        layers.append(
-            tf.keras.layers.Activation(class_activation, name="class_activation")
         )
 
         self.net = layers
