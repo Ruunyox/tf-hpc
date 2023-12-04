@@ -1,6 +1,6 @@
 #! /bin/bash
-#SBATCH -J tf_cli_test_gpu
-#SBATCH -o ./fashionmnist_gpu/cli_test_gpu.out
+#SBATCH -J tf_cli_conv_test_gpu
+#SBATCH -o ./fashionmnist_conv_gpu/cli_conv_test_gpu.out
 #SBATCH --time=00:30:00
 #SBATCH --partition=gpu-a100
 #SBATCH --reservation=a100_tests
@@ -20,4 +20,4 @@ conda activate base
 export TF_CPP_MIN_LOG_LEVEL=2
 export XLA_FLAGS=--xla_gpu_cuda_data_dir=/sw/compiler/cuda/11.8/a100/install 
 
-tfhpc --config config_gpu.yaml
+tfhpc --config config_conv_gpu.yaml

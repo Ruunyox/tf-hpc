@@ -18,7 +18,7 @@ fit: # See help(tensorflow.keras.Model.fit) for options. Only supports tf.Datase
         - class_path: tensorflow.keras.callbacks.TensorBoard
           init_args:
               log_dir: fashionmnist_gpu/tensorboard
-              profile_batch: '50,60'
+              profile_batch: '50,60'  
         - class_path: tensorflow.keras.callbacks.ProgbarLogger
         - class_path: tensorflow.keras.callbacks.ModelCheckpoint
           init_args:
@@ -37,10 +37,4 @@ model_wrapper:
             out_dim: 10
             activation: relu
             hidden_layers: [512, 256]
-strategy:
-    name: mirrored_strategy
-    opts:
-        devices: ["/gpu:0", "/gpu:1", "/gpu:2", "/gpu:3"]
-        cross_device_ops:
-            op: hierarchical_copy_all_reduce
-            opts: null
+strategy: null
